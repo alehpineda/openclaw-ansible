@@ -12,7 +12,7 @@
     PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
   register: openclaw_install
-  changed_when: "'up to date' not in openclaw_install.stdout"
+  changed_when: true
 
 - name: Verify openclaw installation
   ansible.builtin.shell:

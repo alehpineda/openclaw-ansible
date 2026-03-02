@@ -79,6 +79,13 @@
   ansible.builtin.include_tasks: openclaw-development.yml
   when: openclaw_install_mode == "development"
 
+- name: Remove legacy pnpm block from .bashrc (pre-npm switch)
+  ansible.builtin.blockinfile:
+    path: "{{ openclaw_home }}/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - OpenClaw pnpm"
+    state: absent
+    create: false
+
 - name: Configure .bashrc for openclaw user (base config)
   ansible.builtin.blockinfile:
     path: "{{ openclaw_home }}/.bashrc"
