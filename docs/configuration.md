@@ -89,7 +89,7 @@ Directly edit `roles/openclaw/defaults/main.yml` before running the playbook.
 - **Type**: String (`release` or `development`)
 - **Default**: `release`
 - **Description**: Installation mode
-  - `release`: Install via npm (`pnpm install -g openclaw@latest`)
+  - `release`: Install via npm (`npm install -g openclaw@latest`)
   - `development`: Clone repo, build from source, symlink binary
 - **Example**:
   ```bash

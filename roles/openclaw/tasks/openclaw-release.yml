@@ -1,18 +1,18 @@
 ---
-# Release mode installation - Install via pnpm from npm registry
+# Release mode installation - Install via npm from npm registry
 
-- name: Install OpenClaw globally as openclaw user (using pnpm)
+- name: Install OpenClaw globally as openclaw user (using npm)
   ansible.builtin.shell:
-    cmd: pnpm install -g openclaw@latest
+    cmd: npm install -g openclaw@latest
     executable: /bin/bash
   become: true
   become_user: "{{ openclaw_user }}"
   environment:
-    PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
-    PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+    NPM_CONFIG_PREFIX: "{{ openclaw_home }}/.local"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
   register: openclaw_install
-  changed_when: "'Already up to date' not in openclaw_install.stdout"
+  changed_when: "'up to date' not in openclaw_install.stdout"
 
 - name: Verify openclaw installation
   ansible.builtin.shell:
@@ -21,8 +21,8 @@
   become: true
   become_user: "{{ openclaw_user }}"
   environment:
-    PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
-    PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+    NPM_CONFIG_PREFIX: "{{ openclaw_home }}/.local"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
   register: openclaw_version
   changed_when: false

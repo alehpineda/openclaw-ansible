@@ -11,7 +11,7 @@
 - **Automatic OS detection** with proper fallback
 
 #### Installation Modes
-- **Release Mode** (default): Install via `pnpm install -g openclaw@latest`
+- **Release Mode** (default): Install via `npm install -g openclaw@latest`
 - **Development Mode**: Clone repo, build from source, symlink binary
 - Switch modes with `-e openclaw_install_mode=development`
 - Development aliases: `openclaw-rebuild`, `openclaw-dev`, `openclaw-pull`
@@ -19,7 +19,7 @@
 #### System Improvements
 - **apt update & upgrade** runs automatically at start (Debian/Ubuntu)
 - **Homebrew integrated** in PATH for all users
-- **pnpm package manager** used for OpenClaw installation
+- **npm global install** used for OpenClaw release installation (pnpm for development)
 
 ### 🐛 Bug Fixes
 
@@ -36,7 +36,7 @@
    - Alternative documented: `sudo -u openclaw -i`
 
 3. **OpenClaw Installation** ✅
-   - Changed: `pnpm add -g` → `pnpm install -g openclaw@latest`
+   - Changed: `pnpm add -g` → `npm install -g openclaw@latest`
    - Added installation verification
    - Added version display
 
@@ -116,7 +116,7 @@ roles/openclaw/tasks/
   - Fixed systemd user service support
 
 - **roles/openclaw/tasks/openclaw.yml**
-  - Changed to `pnpm install -g openclaw@latest`
+  - Changed to `npm install -g openclaw@latest`
   - Added installation verification
   - Removed config.yml template generation
   - Removed systemd service installation
@@ -258,7 +258,7 @@ echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
 source ~/.bashrc
 
 # 5. Reinstall openclaw
-pnpm install -g openclaw@latest
+npm install -g openclaw@latest
 ```
 
 ### 📚 Documentation Updates

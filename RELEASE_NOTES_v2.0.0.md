@@ -13,7 +13,7 @@ This release adds **multi-OS support** (macOS + Linux), **development mode**, an
 - ✅ Automatic OS detection with proper fallback
 
 #### Installation Modes
-- ✅ **Release Mode** (default): `pnpm install -g openclaw@latest`
+- ✅ **Release Mode** (default): `npm install -g openclaw@latest`
 - ✅ **Development Mode**: Clone repo, build from source, symlink binary
 - ✅ Switch with `-e openclaw_install_mode=development`
 - ✅ Development aliases: `openclaw-rebuild`, `openclaw-dev`, `openclaw-pull`
@@ -98,7 +98,7 @@ echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
 source ~/.bashrc
 
 # Reinstall openclaw
-pnpm install -g openclaw@latest
+npm install -g openclaw@latest
 ```
 
 ### 📊 Testing

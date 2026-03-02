@@ -9,10 +9,10 @@ This guide explains how to install OpenClaw in **development mode**, where the a
 | Feature | Release Mode | Development Mode |
 |---------|-------------|------------------|
 | Source | npm registry | GitHub repository |
-| Installation | `pnpm install -g openclaw@latest` | `git clone` + `pnpm build` |
-| Location | `~/.local/share/pnpm/global/...` | `~/code/openclaw/` |
-| Binary | Global pnpm package | Symlink to `bin/openclaw.js` |
-| Updates | `pnpm install -g openclaw@latest` | `git pull` + `pnpm build` |
+| Installation | `npm install -g openclaw@latest` | `git clone` + `pnpm build` |
+| Location | `~/.local/lib/node_modules/openclaw` | `~/code/openclaw/` |
+| Binary | Global npm package | Symlink to `bin/openclaw.js` |
+| Updates | `npm install -g openclaw@latest` | `git pull` + `pnpm build` |
 | Use Case | Production, stable deployments | Development, testing, debugging |
 | Recommended For | End users | Developers, contributors |
 
@@ -223,7 +223,7 @@ ansible-playbook playbook.yml --ask-become-pass \
 
 ```bash
 # Uninstall global package
-pnpm uninstall -g openclaw
+npm uninstall -g openclaw
 
 # Run ansible in development mode
 ansible-playbook playbook.yml --ask-become-pass -e openclaw_install_mode=development
@@ -239,7 +239,7 @@ rm ~/.local/bin/openclaw
 rm -rf ~/code/openclaw
 
 # Install from npm
-pnpm install -g openclaw@latest
+npm install -g openclaw@latest
 ```
 
 ## Troubleshooting

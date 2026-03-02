@@ -28,7 +28,7 @@ The underlying project currently requires system-level permissions and configura
 - 🐳 **Docker**: Docker CE with security hardening
 - 🚀 **One-command install**: Complete setup in minutes
 - 🔧 **Auto-configuration**: DBus, systemd, environment setup
-- 📦 **pnpm installation**: Uses `pnpm install -g openclaw@latest`
+- 📦 **npm installation**: Uses `npm install -g openclaw@latest`
 
 ## Quick Start
 
@@ -105,9 +105,9 @@ openclaw logs
 ## Installation Modes
 
 ### Release Mode (Default)
-- Installs via `pnpm install -g openclaw@latest`
+- Installs via `npm install -g openclaw@latest`
 - Gets latest stable version from npm registry
-- Automatic updates via `pnpm install -g openclaw@latest`
+- Automatic updates via `npm install -g openclaw@latest`
 - **Recommended for production**
 
 ### Development Mode
