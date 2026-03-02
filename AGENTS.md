@@ -22,7 +22,7 @@ Task order in `roles/openclaw/tasks/main.yml`:
 - user.yml       # Create system user
 - docker.yml     # Install Docker (creates /etc/docker)
 - firewall.yml   # Configure UFW + daemon.json (needs /etc/docker to exist)
-- nodejs.yml     # Node.js + pnpm
+- nodejs.yml     # Node.js
 - openclaw.yml   # Container setup
 ```
 

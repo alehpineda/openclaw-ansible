@@ -5,7 +5,7 @@
 ### 1. Installation Modes (Release vs Development)
 - **File**: `roles/openclaw/defaults/main.yml`
 - Added `openclaw_install_mode` variable (release | development)
-- Release mode: Install via `pnpm install -g openclaw@latest` (default)
+- Release mode: Install via `npm install -g openclaw@latest` (default)
 - Development mode: Clone repo, build, symlink binary
 - Development settings: repo URL, branch, code directory
 
@@ -16,7 +16,7 @@
 
 **Development Mode Features**:
 - Clones to `~/code/openclaw`
-- Runs `pnpm install` and `pnpm build`
+- Runs `npm install` and `npm run build`
 - Symlinks `bin/openclaw.js` to `~/.local/bin/openclaw`
 - Adds aliases: `openclaw-rebuild`, `openclaw-dev`, `openclaw-pull`
 - Sets `OPENCLAW_DEV_DIR` environment variable
@@ -87,11 +87,12 @@ ansible-playbook playbook.yml --ask-become-pass \
 - Added Homebrew to PATH
 - Enhanced security with ProtectSystem and ProtectHome
 
-### 8. OpenClaw Installation via pnpm
-- **File**: `roles/openclaw/tasks/openclaw.yml`
-- Changed from `pnpm add -g` to `pnpm install -g openclaw@latest`
-- Added verification step
-- Added version display
+### 8. OpenClaw Installation via npm
+- **File**: `roles/openclaw/tasks/openclaw-release.yml`
+- Migrates away from legacy pnpm/bun global installs
+- Installs via `npm install -g openclaw@latest` with `NPM_CONFIG_PREFIX`
+- Added post-install validation with `openclaw doctor`
+- Added service restart after install/update
 
 ### 9. Correct User Switching Command
 - **File**: `run-playbook.sh`
@@ -126,7 +127,7 @@ ansible-playbook playbook.yml --ask-become-pass \
 2. ✅ **User switching**: Correct command (`sudo su - openclaw`)
 3. ✅ **Environment**: XDG_RUNTIME_DIR and DBUS properly set
 4. ✅ **Homebrew**: Integrated and in PATH
-5. ✅ **pnpm**: Uses `pnpm install -g openclaw@latest`
+5. ✅ **npm**: Uses `npm install -g openclaw@latest`
 
 ### OS Detection Framework
 - Clean separation between Linux and macOS tasks
@@ -158,7 +159,7 @@ echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
 source ~/.bashrc
 
 # 5. Reinstall openclaw
-pnpm install -g openclaw@latest
+npm install -g openclaw@latest
 ```
 
 ## 📝 TODO - Future macOS Enhancements

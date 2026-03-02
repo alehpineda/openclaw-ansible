@@ -35,7 +35,7 @@ The `ci_test` variable skips tasks that require:
 - systemd services (loginctl, daemon installation)
 - External package installation (openclaw app install)
 
-Everything else runs normally: package installation, user creation, Node.js/pnpm setup, directory structure, config file rendering, etc.
+Everything else runs normally: package installation, user creation, Node.js setup, directory structure, config file rendering, etc.
 
 ## What Gets Tested
 
@@ -43,7 +43,7 @@ Everything else runs normally: package installation, user creation, Node.js/pnpm
 |-----------|---------|-------|
 | System packages (35+) | ✅ Yes | Full apt install |
 | User creation + config | ✅ Yes | User, .bashrc, sudoers, SSH dir |
-| Node.js + pnpm | ✅ Yes | Full install + version check |
+| Node.js | ✅ Yes | Full install + version check |
 | Directory structure | ✅ Yes | All .openclaw/* dirs with perms |
 | Git global config | ✅ Yes | Aliases, default branch |
 | Vim config | ✅ Yes | Template rendering |

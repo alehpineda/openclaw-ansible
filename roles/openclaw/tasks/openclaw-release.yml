@@ -1,9 +1,12 @@
 ---
-# Release mode installation - Install via pnpm from npm registry
+# Release mode installation - Install via npm from npm registry
+# Migration from v2026.2.26+: npm global install places bundled extension manifests
+# in a trusted path for the plugin loader. pnpm/bun global store paths are not trusted.
 
-- name: Install OpenClaw globally as openclaw user (using pnpm)
+# --- Migration: remove legacy pnpm global install ---
+- name: Remove legacy pnpm global openclaw install (migration)
   ansible.builtin.shell:
-    cmd: pnpm install -g openclaw@latest
+    cmd: pnpm uninstall -g openclaw 2>/dev/null || true
     executable: /bin/bash
   become: true
   become_user: "{{ openclaw_user }}"
@@ -11,22 +14,119 @@
     PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
     PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
-  register: openclaw_install
-  changed_when: "'Already up to date' not in openclaw_install.stdout"
+  changed_when: false
+  failed_when: false
 
-- name: Verify openclaw installation
+# --- Migration: remove legacy bun global install ---
+- name: Remove legacy bun global openclaw install (migration)
   ansible.builtin.shell:
-    cmd: openclaw --version
+    cmd: bun remove -g openclaw 2>/dev/null || true
     executable: /bin/bash
   become: true
   become_user: "{{ openclaw_user }}"
   environment:
-    PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
-    PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+    HOME: "{{ openclaw_home }}"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+  changed_when: false
+  failed_when: false
+
+# --- Install OpenClaw via npm ---
+- name: Install OpenClaw globally via npm
+  ansible.builtin.shell:
+    cmd: |
+      set -e
+      BEFORE=$(npm list -g --depth=0 openclaw 2>/dev/null | grep -o 'openclaw@[^ ]*' | head -1 || echo "none")
+      NPM_CONFIG_PREFIX="{{ openclaw_home }}/.local" npm install -g openclaw@latest
+      AFTER=$(npm list -g --depth=0 openclaw 2>/dev/null | grep -o 'openclaw@[^ ]*' | head -1 || echo "none")
+      if [ "$BEFORE" = "$AFTER" ] && [ "$BEFORE" != "none" ]; then
+        exit 0
+      fi
+      exit 1
+    executable: /bin/bash
+  become: true
+  become_user: "{{ openclaw_user }}"
+  environment:
+    NPM_CONFIG_PREFIX: "{{ openclaw_home }}/.local"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+    HOME: "{{ openclaw_home }}"
+  register: openclaw_install
+  changed_when: openclaw_install.rc == 1
+  failed_when: openclaw_install.rc > 1
+
+- name: Verify openclaw installation
+  ansible.builtin.command:
+    cmd: openclaw --version
+  become: true
+  become_user: "{{ openclaw_user }}"
+  environment:
+    NPM_CONFIG_PREFIX: "{{ openclaw_home }}/.local"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
   register: openclaw_version
   changed_when: false
 
 - name: Display installed OpenClaw version (release)
   ansible.builtin.debug:
-    msg: "OpenClaw installed from npm: {{ openclaw_version.stdout }}"
+    msg: "OpenClaw installed via npm: {{ openclaw_version.stdout }}"
+
+# --- Post-install validation ---
+- name: Run openclaw doctor (post-install validation)
+  ansible.builtin.command:
+    cmd: openclaw doctor
+  become: true
+  become_user: "{{ openclaw_user }}"
+  environment:
+    NPM_CONFIG_PREFIX: "{{ openclaw_home }}/.local"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+    HOME: "{{ openclaw_home }}"
+  register: openclaw_doctor
+  failed_when: false
+  changed_when: false
+
+- name: Display openclaw doctor output
+  ansible.builtin.debug:
+    msg: "{{ openclaw_doctor.stdout_lines | default([]) }}"
+
+- name: Warn if openclaw doctor reported issues
+  ansible.builtin.debug:
+    msg: |
+      WARNING: openclaw doctor reported issues (exit code {{ openclaw_doctor.rc }}).
+      Review the output above and re-run the playbook after fixing configuration.
+      stderr: {{ openclaw_doctor.stderr | default('') }}
+  when: openclaw_doctor.rc | default(0) != 0
+
+# --- Service restart after install/update ---
+- name: Check if openclaw systemd service exists
+  ansible.builtin.stat:
+    path: /etc/systemd/system/openclaw.service
+  register: openclaw_service_file
+
+- name: Restart openclaw service after installation
+  ansible.builtin.systemd:
+    name: openclaw
+    state: restarted
+    daemon_reload: true
+  when:
+    - openclaw_service_file.stat.exists
+    - not ci_test
+
+- name: Verify openclaw service status after restart
+  ansible.builtin.command: systemctl is-active openclaw
+  register: openclaw_service_status
+  failed_when: false
+  changed_when: false
+  when:
+    - openclaw_service_file.stat.exists
+    - not ci_test
+
+- name: Warn if openclaw service is not active after restart
+  ansible.builtin.debug:
+    msg: |
+      WARNING: openclaw service is not running after restart.
+      Status: {{ openclaw_service_status.stdout | default('unknown') }}
+      Run: sudo systemctl status openclaw
+      Logs: sudo journalctl -u openclaw -n 50
+  when:
+    - openclaw_service_file.stat.exists
+    - not ci_test
+    - (openclaw_service_status.stdout | default('unknown')) != 'active'

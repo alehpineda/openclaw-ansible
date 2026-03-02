@@ -85,7 +85,6 @@ systemd → docker compose → openclaw container
 5. **Node.js Installation** (`nodejs.yml`)
    - Add NodeSource repository
    - Install Node.js 22.x
-   - Install pnpm globally
 
 6. **OpenClaw Setup** (`openclaw.yml`)
    - Create directories
@@ -123,7 +122,7 @@ main.yml
 ├── user.yml (create openclaw user)
 ├── docker.yml (install Docker, create /etc/docker)
 ├── firewall.yml (configure UFW + Docker daemon)
-├── nodejs.yml (Node.js + pnpm)
+├── nodejs.yml (Node.js)
 └── openclaw.yml (container setup)
 ```
 

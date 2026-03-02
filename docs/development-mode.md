@@ -9,10 +9,10 @@ This guide explains how to install OpenClaw in **development mode**, where the a
 | Feature | Release Mode | Development Mode |
 |---------|-------------|------------------|
 | Source | npm registry | GitHub repository |
-| Installation | `pnpm install -g openclaw@latest` | `git clone` + `pnpm build` |
-| Location | `~/.local/share/pnpm/global/...` | `~/code/openclaw/` |
-| Binary | Global pnpm package | Symlink to `bin/openclaw.js` |
-| Updates | `pnpm install -g openclaw@latest` | `git pull` + `pnpm build` |
+| Installation | `npm install -g openclaw@latest` | `git clone` + `npm run build` |
+| Location | `~/.local/lib/node_modules/openclaw/...` | `~/code/openclaw/` |
+| Binary | Global npm package | Symlink to `bin/openclaw.js` |
+| Updates | `npm install -g openclaw@latest` | `git pull` + `npm run build` |
 | Use Case | Production, stable deployments | Development, testing, debugging |
 | Recommended For | End users | Developers, contributors |
 
@@ -58,17 +58,15 @@ ansible-playbook playbook.yml --ask-become-pass -e openclaw_install_mode=develop
 │   ├── data/
 │   └── logs/
 ├── .local/
-│   ├── bin/
-│   │   └── openclaw       # Symlink -> ~/code/openclaw/bin/openclaw.js
-│   └── share/pnpm/
+│   └── bin/
+│       └── openclaw       # Symlink -> ~/code/openclaw/bin/openclaw.js
 └── code/
     └── openclaw/          # Git repository
         ├── bin/
         │   └── openclaw.js
         ├── dist/          # Built files
         ├── src/           # Source code
-        ├── package.json
-        └── pnpm-lock.yaml
+        └── package.json
 ```
 
 ### Installation Steps
@@ -89,12 +87,12 @@ The Ansible playbook performs these steps:
 3. **Install dependencies**
    ```bash
    cd openclaw
-   pnpm install
+   npm install
    ```
 
 4. **Build from source**
    ```bash
-   pnpm build
+   npm run build
    ```
 
 5. **Create symlink**
@@ -105,9 +103,9 @@ The Ansible playbook performs these steps:
 
 6. **Add development aliases** to `.bashrc`:
    ```bash
-   alias openclaw-rebuild='cd ~/code/openclaw && pnpm build'
+   alias openclaw-rebuild='cd ~/code/openclaw && npm run build'
    alias openclaw-dev='cd ~/code/openclaw'
-   alias openclaw-pull='cd ~/code/openclaw && git pull && pnpm install && pnpm build'
+   alias openclaw-pull='cd ~/code/openclaw && git pull && npm install && npm run build'
    ```
 
 ## Development Workflow
@@ -124,7 +122,7 @@ vim src/some-file.ts
 
 # 3. Rebuild
 openclaw-rebuild
-# or: pnpm build
+# or: npm run build
 
 # 4. Test immediately
 openclaw --version
@@ -140,8 +138,8 @@ openclaw-pull
 # Or manually:
 cd ~/code/openclaw
 git pull
-pnpm install
-pnpm build
+npm install
+npm run build
 ```
 
 ### Testing Changes
@@ -162,13 +160,13 @@ cd ~/code/openclaw
 
 # Switch to feature branch
 git checkout feature-branch
-pnpm install
-pnpm build
+npm install
+npm run build
 
 # Switch back to main
 git checkout main
-pnpm install
-pnpm build
+npm install
+npm run build
 ```
 
 ## Development Aliases
@@ -178,8 +176,8 @@ The following aliases are added to `.bashrc`:
 | Alias | Command | Purpose |
 |-------|---------|---------|
 | `openclaw-dev` | `cd ~/code/openclaw` | Navigate to repo |
-| `openclaw-rebuild` | `cd ~/code/openclaw && pnpm build` | Rebuild after changes |
-| `openclaw-pull` | `cd ~/code/openclaw && git pull && pnpm install && pnpm build` | Update and rebuild |
+| `openclaw-rebuild` | `cd ~/code/openclaw && npm run build` | Rebuild after changes |
+| `openclaw-pull` | `cd ~/code/openclaw && git pull && npm install && npm run build` | Update and rebuild |
 
 Plus an environment variable:
 
@@ -223,7 +221,7 @@ ansible-playbook playbook.yml --ask-become-pass \
 
 ```bash
 # Uninstall global package
-pnpm uninstall -g openclaw
+npm uninstall -g openclaw
 
 # Run ansible in development mode
 ansible-playbook playbook.yml --ask-become-pass -e openclaw_install_mode=development
@@ -239,7 +237,7 @@ rm ~/.local/bin/openclaw
 rm -rf ~/code/openclaw
 
 # Install from npm
-pnpm install -g openclaw@latest
+npm install -g openclaw@latest
 ```
 
 ## Troubleshooting
@@ -254,8 +252,8 @@ node --version
 
 # Clean install
 rm -rf node_modules
-pnpm install
-pnpm build
+npm install
+npm run build
 ```
 
 ### Symlink Not Working
@@ -288,8 +286,8 @@ git reset --hard origin/main
 git clean -fdx
 
 # Rebuild
-pnpm install
-pnpm build
+npm install
+npm run build
 ```
 
 ## Performance Considerations
@@ -298,20 +296,20 @@ pnpm build
 
 First build takes longer (~1-2 minutes depending on system):
 ```bash
-pnpm install    # Downloads dependencies
-pnpm build      # Compiles TypeScript
+npm install    # Downloads dependencies
+npm run build  # Compiles TypeScript
 ```
 
 Subsequent rebuilds are faster (~10-30 seconds):
 ```bash
-pnpm build      # Only recompiles changed files
+npm run build  # Only recompiles changed files
 ```
 
 ### Disk Usage
 
 Development mode uses more disk space:
 
-- **Release mode**: ~150 MB (global pnpm cache)
+- **Release mode**: ~150 MB (npm global cache)
 - **Development mode**: ~400 MB (repo + node_modules + dist)
 
 ### Memory Usage
@@ -327,8 +325,8 @@ No difference in runtime memory usage between modes.
 cd ~/code/openclaw
 git fetch origin pull/123/head:pr-123
 git checkout pr-123
-pnpm install
-pnpm build
+npm install
+npm run build
 
 # Test it
 openclaw doctor
@@ -342,11 +340,11 @@ openclaw doctor
 
 cd ~/code/openclaw
 git pull
-pnpm install
-pnpm build
+npm install
+npm run build
 
 # Run tests
-pnpm test
+npm test
 
 # Integration test
 openclaw doctor
@@ -363,13 +361,13 @@ openclaw doctor
 
 2. ✅ **Test changes before committing**
    ```bash
-   pnpm build && openclaw doctor
+   npm run build && openclaw doctor
    ```
 
 3. ✅ **Keep dependencies updated**
    ```bash
-   pnpm update
-   pnpm build
+   npm update
+   npm run build
    ```
 
 4. ✅ **Use feature branches**
@@ -380,7 +378,7 @@ openclaw doctor
 ### Don't Do
 
 - ❌ Editing code without rebuilding
-- ❌ Running `pnpm link` manually (breaks setup)
+- ❌ Running `npm link` manually (breaks setup)
 - ❌ Installing global packages while in dev mode
 - ❌ Modifying symlink manually
 
@@ -407,10 +405,10 @@ ln -sf ~/code/openclaw-test/bin/openclaw.js ~/.local/bin/openclaw
 cd ~/code/openclaw
 
 # Development build (faster, includes source maps)
-NODE_ENV=development pnpm build
+NODE_ENV=development npm run build
 
 # Production build (optimized)
-NODE_ENV=production pnpm build
+NODE_ENV=production npm run build
 ```
 
 ### Debugging

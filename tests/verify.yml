@@ -22,10 +22,6 @@
       ansible.builtin.command: node --version
       changed_when: false
 
-    - name: Verify pnpm installed
-      ansible.builtin.command: pnpm --version
-      changed_when: false
-
     - name: Verify openclaw directory structure
       ansible.builtin.stat:
         path: "{{ item.path }}"

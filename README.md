@@ -28,7 +28,7 @@ The underlying project currently requires system-level permissions and configura
 - 🐳 **Docker**: Docker CE with security hardening
 - 🚀 **One-command install**: Complete setup in minutes
 - 🔧 **Auto-configuration**: DBus, systemd, environment setup
-- 📦 **pnpm installation**: Uses `pnpm install -g openclaw@latest`
+- 📦 **npm installation**: Uses `npm install -g openclaw@latest`
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ ansible-playbook playbook.yml --ask-become-pass -e openclaw_install_mode=develop
 - Tailscale (mesh VPN)
 - UFW firewall (SSH + Tailscale ports only)
 - Docker CE + Compose V2 (for sandboxes)
-- Node.js 22.x + pnpm
+- Node.js 22.x
 - OpenClaw on host (not containerized)
 - Systemd service (auto-start)
 
@@ -105,14 +105,14 @@ openclaw logs
 ## Installation Modes
 
 ### Release Mode (Default)
-- Installs via `pnpm install -g openclaw@latest`
+- Installs via `npm install -g openclaw@latest`
 - Gets latest stable version from npm registry
-- Automatic updates via `pnpm install -g openclaw@latest`
+- Automatic updates via `npm install -g openclaw@latest`
 - **Recommended for production**
 
 ### Development Mode
 - Clones from `https://github.com/openclaw/openclaw.git`
-- Builds from source with `pnpm build`
+- Builds from source with `npm run build`
 - Symlinks binary to `~/.local/bin/openclaw`
 - Adds helpful aliases:
   - `openclaw-rebuild` - Rebuild after code changes
@@ -166,7 +166,7 @@ ansible-playbook playbook.yml --ask-become-pass
 - Tailscale (mesh VPN)
 - UFW firewall (SSH + Tailscale ports only)
 - Docker CE + Compose V2 (for sandboxes)
-- Node.js 22.x + pnpm
+- Node.js 22.x
 - OpenClaw on host (not containerized)
 - Systemd service (auto-start)
 
@@ -203,7 +203,7 @@ ansible-playbook playbook.yml --ask-become-pass -e openclaw_install_mode=develop
 
 This will:
 - Clone openclaw repo to `~/code/openclaw`
-- Run `pnpm install` and `pnpm build`
+- Run `npm install` and `npm run build`
 - Symlink binary to `~/.local/bin/openclaw`
 - Add development aliases to `.bashrc`
 

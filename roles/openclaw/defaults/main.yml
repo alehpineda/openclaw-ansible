@@ -23,7 +23,7 @@ openclaw_user: openclaw
 openclaw_home: /home/openclaw
 
 # Installation mode: 'release' or 'development'
-# release: Install via pnpm install -g openclaw@latest
+# release: Install via npm install -g openclaw@latest
 # development: Clone repo, build from source, link globally
 openclaw_install_mode: "release"
 

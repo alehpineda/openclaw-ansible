@@ -40,38 +40,36 @@
     msg: "Git repository updated: {{ git_pull_result.changed | default(false) }}"
   when: openclaw_repo_exists.stat.exists
 
-- name: Install dependencies with pnpm
+- name: Install dependencies with npm
   ansible.builtin.shell:
-    cmd: pnpm install
+    cmd: npm install
     chdir: "{{ openclaw_repo_dir }}"
     executable: /bin/bash
   become: true
   become_user: "{{ openclaw_user }}"
   environment:
-    PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
-    PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
-  register: pnpm_install_result
-  changed_when: "'Already up to date' not in pnpm_install_result.stdout"
+  register: npm_install_result
+  changed_when: "'up to date' not in npm_install_result.stdout"
 
 - name: Build openclaw from source
   ansible.builtin.shell:
-    cmd: pnpm build
+    cmd: npm run build
     chdir: "{{ openclaw_repo_dir }}"
     executable: /bin/bash
   become: true
   become_user: "{{ openclaw_user }}"
   environment:
-    PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
-    PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
-  register: pnpm_build_result
+  register: npm_build_result
   changed_when: true  # Build always changes dist/ directory
 
 - name: Display build output
   ansible.builtin.debug:
     msg: "Build completed successfully"
-  when: pnpm_build_result.rc == 0
+  when: npm_build_result.rc == 0
 
 - name: Check if dist directory exists
   ansible.builtin.stat:
@@ -111,8 +109,7 @@
   become: true
   become_user: "{{ openclaw_user }}"
   environment:
-    PNPM_HOME: "{{ openclaw_home }}/.local/share/pnpm"
-    PATH: "{{ openclaw_home }}/.local/bin:{{ openclaw_home }}/.local/share/pnpm:/usr/local/bin:/usr/bin:/bin"
+    PATH: "{{ openclaw_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
     HOME: "{{ openclaw_home }}"
   register: openclaw_dev_version
   changed_when: false
@@ -133,9 +130,9 @@
       export OPENCLAW_DEV_DIR="{{ openclaw_repo_dir }}"
 
       # Aliases for development
-      alias openclaw-rebuild='cd {{ openclaw_repo_dir }} && pnpm build'
+      alias openclaw-rebuild='cd {{ openclaw_repo_dir }} && npm run build'
       alias openclaw-dev='cd {{ openclaw_repo_dir }}'
-      alias openclaw-pull='cd {{ openclaw_repo_dir }} && git pull && pnpm install && pnpm build'
+      alias openclaw-pull='cd {{ openclaw_repo_dir }} && git pull && npm install && npm run build'
     create: true
     owner: "{{ openclaw_user }}"
     group: "{{ openclaw_user }}"
